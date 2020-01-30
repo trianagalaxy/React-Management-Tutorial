@@ -11,82 +11,95 @@ const data = fs.readFileSync('.database.json');
 const conf = JSON.parse(data);
 const mysql = require('mysql');
 var oracledb = require('oracledb');
-/*var dbConfig = require('dbconfig');*/
 var dbconfig =
 {
-  user : process.env.NODEORACLEDB_USER || "hr",
-  password : process.env.NODEORACLEDB_PASSWORD || "hr",
+  user : process.env.NODEORACLEDB_USER || "triana",
+  password : process.env.NODEORACLEDB_PASSWORD || "triana",
   connectString : process.env.NODE_ORACLEDB_CONNECTIONSTRING || "61.111.14.78/youhostdb"
 }
 
-/*
-const connection = mysql.createConnection({
-    host: conf.host,
-    user: conf.user,
-    password: conf.password,
-    port: conf.port,
-    database: conf.database
-});*/
 
-app.get('/api/customers', (req,res) => {
-  oracledb.getConnection({
-    user : dbconfig.user,
-    password : dbconfig.password,
-    connectString : dbconfig.connectString
-    },
-  
+app.get('/api/buffercache', (req,res) => {
+  oracledb.getConnection(dbconfig,
   function(err, connection){
       if(err) {
         console.error(err.message);
         return;
       }
-      console.log('==> userlist search query');
+      console.log(req.body);
 
-      var query = 'SELECT * FROM CUSTOMER';
+      var query = "SELECT	* FROM	TRIANA.BUF_BUFFER ORDER BY 1 ASC";
 
-    connection.execute(query, function(err,result){
-      if (err) {
-        console.err(err.message);
+      connection.execute(query, function(err,result){
+        if (err) {
+          console.err(err.message);
 
-        doRelease(connection);
-        return;
-      }
-
-      console.log(result.rows);
-
-      doRelease(connection, result.rows);
-      });
+          doRelease(connection);
+          return;
+        }
+        console.log(result.rows);
+        doRelease(connection, result.rows);
+        });
     });
-
-  function doRelease(connection, userlist){
+    
+  function doRelease(connection, buffercache){
     connection.close(function(err){
       if(err){
         console.error(err.message);
       }
 
-      console.log('list size: ' + userlist.length);
+      console.log('list size: ' + buffercache.length);
 
-      for(var i=0; i<userlist.length; i++){
-        console.log('name: ' + userlist[i][1]);
+      for(var i=0; i<buffercache.length; i++){
+        console.log('buffer cache: ' + buffercache[i][i]);
       }
 
-      res.send(userlist);
-  });
-};
+      res.send(buffercache);
+    });
+  }
 });
 
 
 
+app.get('/api/diccache', (req,res) => {
+  oracledb.getConnection(dbconfig,
+  function(err, connection){
+      if(err) {
+        console.error(err.message);
+        return;
+      }
+      console.log(req.body);
 
-/*
-app.get('/api/customers', (req,res) => {
-    connection.query(
-        "SELECT * FROM CUSTOMER",
-        (err, rows, fields) => {
-          res.send(rows);
+      var query2 = "SELECT	* FROM	TRIANA.BUF_DICTIONARY ORDER BY 1 ASC";
+
+      connection.execute(query2, function(err,result){
+        if (err) {
+          console.err(err.message);
+
+          doRelease2(connection);
+          return;
         }
-    );
+        console.log(result.rows);
+        doRelease2(connection, result.rows);
+        });
+    });
+    
+  function doRelease2(connection, diccache){
+    connection.close(function(err){
+      if(err){
+        console.error(err.message);
+      }
+
+      console.log('list size: ' + diccache.length);
+
+      for(var i=0; i<diccache.length; i++){
+        console.log('dictionary cache: ' + diccache[i][i]);
+      }
+
+      res.send(diccache);
+    });
+  }
 });
-*/
+
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
