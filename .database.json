@@ -1,7 +1,0 @@
-{
-    "host": "61.111.14.78",
-    "user": "hr",
-    "password": "hr",
-    "port":"1521",
-    "database": "youhostdb"
-}
