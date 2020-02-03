@@ -15,8 +15,8 @@ var oracledb = require('oracledb');
 var dbconfig =
 {
   user : process.env.NODEORACLEDB_USER || "hr",
-  password : process.env.NODEORACLEDB_PASSWORD || "hr",
-  connectString : process.env.NODE_ORACLEDB_CONNECTIONSTRING || "61.111.14.78/youhostdb"
+  password : process.env.NODEORACLEDB_PASSWORD || "??",
+  connectString : process.env.NODE_ORACLEDB_CONNECTIONSTRING || "?????????/????????"
 }
 
 /*
